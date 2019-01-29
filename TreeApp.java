@@ -16,9 +16,7 @@ import java.util.Scanner;
 public class TreeApp {
 
 	public static Scanner sc= new Scanner(System.in);
-	public static RelationshipFactory rl = new RelationshipFactory();
-	
-
+	public static RelationshipsUtility ru = new RelationshipsUtility();
 	
 	public static void main(String[] args) {
 		
@@ -27,7 +25,7 @@ public class TreeApp {
 		printMenu();
 		try{
 			while(!quit){
-				System.out.println("Enter option:");
+				System.out.println("Enter option (1-4):");
 				int operation = sc.nextInt();
 				sc.nextLine();
 				switch(operation){
@@ -36,15 +34,15 @@ public class TreeApp {
 						printMenu();
 						break;
 					case 2:
-						rl.printFamilyMap();
+						ru.printFamilyMap();
 						break;
 					case 3:
 						System.out.println("Enter query");
-						proceedWithQuerry();
+						ru.proceedWithQuerry();
 						break;
 					case 4:
 						System.out.println("Fill with test data");
-						rl.populateFamilyTree();
+						ru.populateFamilyTree();
 						break;
 					default:
 						System.out.println("QUIT");
@@ -58,23 +56,13 @@ public class TreeApp {
 		}
 	}
 
-	private static void proceedWithQuerry() {
-		String query = sc.nextLine();
-		QueryParser qp = new QueryParser();
-		qp = qp.parse(query);
-		if (qp.com.equals(Command.ADD)){
-			rl.addRelation(qp.p1,qp.rel2,qp.p2,qp.rel1,0);
-		} else if (qp.com.equals(Command.RETRIEVE)){
-			rl.getSiblings(qp);
-		} else{
-			System.out.println("Process terminated");
-		}
-	}
-
 	private static void printMenu() {
-		System.out.println("1 - Print menu,"
+		System.out.println("1 - Print options,"
 				+ "\n2 - Print familyTree,"
 				+ "\n3 - Enter query,"
+				+ "\n\t Example:"
+				+ "\n\t    Person=Bern Relation=Wife"
+				+ "\n\t    Mother=Julia Son=Boris"
 				+ "\n4 - Inject test data.");
 	}
 }

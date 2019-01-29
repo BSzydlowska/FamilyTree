@@ -2,7 +2,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-enum Command {ADD, RETRIEVE, ERROR}
 enum Relation {MOTHER, FATHER, SON, DAUGHTER, BROTHER, SISTER, WIFE, HUSBAND, SIBLING};
 
 public class QueryParser {
@@ -12,45 +11,32 @@ public class QueryParser {
 		Mother=Julia Son=Boris
 	*/
 	
-	Command com; 
-	String p1;
-	String p2;
-	Relation rel1;
-	Relation rel2;
-	
-	public QueryParser() {
+	private QueryParser() {
 	}
 
-	public QueryParser(Command com, String p1, String p2, Relation rel1, Relation rel2) {
-		this.com = com;
-		this.p1 = p1;
-		this.p2 = p2;
-		this.rel1 = rel1;
-		this.rel2 = rel2;
-	}
-
-	public QueryParser parse(String query) {
-		List<String> list = Stream.of(query.split("[ =]+")).map(elem -> new String(elem)).collect(Collectors.toList());
+	public static Query parse(String statement) {
+		
+		Query query = new Query();
+		List<String> list = Stream.of(statement.split("[ =]+")).map(elem -> new String(elem)).collect(Collectors.toList());
 		if (list.size()!=4) {
-			System.out.println("Error while parsing to list");
-			com = Command.ERROR;
+			query.command = new ErrorCommand();
 		} else if (list.get(0).equals("Person")){
-			com = Command.RETRIEVE;
-			p1 = list.get(1);
-			rel2 = adjustRelation(list.get(3));
+			query.command = new RetrieveCommand();
+			query.firstPerson = list.get(1);
+			query.firstToSecondRel = adjustRelation(list.get(3));
 		} else {
-			com = Command.ADD;
-			p1 = list.get(1);
-			p2 = list.get(3);
-			rel1 = adjustRelation(list.get(0));
-			rel2 = adjustRelation(list.get(2));	
+			query.command = new AddCommand();
+			query.firstPerson = list.get(1);
+			query.secondPerson = list.get(3);
+			query.secondToFirstRel = adjustRelation(list.get(0));
+			query.firstToSecondRel = adjustRelation(list.get(2));	
 		}
 
-	return new QueryParser(com,p1,p2,rel1,rel2);
+	return query;
 	}
 	
-	private Relation adjustRelation(String rel){
-		switch(rel){
+	private static Relation adjustRelation(String relation){
+		switch(relation){
 			case "Mother":
 				return Relation.MOTHER;
 			case "Father":
